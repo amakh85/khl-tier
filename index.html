@@ -6,14 +6,27 @@
     <title>Рейтинг Хоккейных Команд</title>
     <style>
         :root { --bg: #1a1a2e; --panel: #16213e; --text: #fff; --accent: #e94560; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        
+        /* 🚫 ПОЛНЫЙ ЗАПРЕТ НА ВЫДЕЛЕНИЕ ЛЮБОГО КОНТЕНТА НА СТРАНИЦЕ */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: sans-serif; 
+            -webkit-user-select: none; /* Safari, Chrome, iOS */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* IE/Edge */
+            user-select: none;         /* Стандарт */
+            -webkit-touch-callout: none; /* Блокирует меню Copy/Look Up на iPhone */
+        }
+        
         body { background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        h1 { margin-bottom: 20px; font-size: 1.5rem; }
+        h1 { margin-bottom: 20px; font-size: 1.5rem; text-align: center; }
         .container { display: flex; gap: 20px; width: 100%; max-width: 1000px; }
         .table-wrapper { flex: 2; padding: 5px; background: #0f0f1a; border-radius: 12px; }
         .tier-table { display: flex; flex-direction: column; gap: 8px; background: #0f0f1a; padding: 10px; }
         .tier-row { display: flex; min-height: 90px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.03); }
-        .tier-label { width: 130px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; font-size: 0.9rem; padding: 10px; user-select: none; flex-shrink: 0; }
+        .tier-label { width: 130px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; font-size: 0.9rem; padding: 10px; flex-shrink: 0; }
         .tier-row:nth-child(1) .tier-label { background: #bfff7f; color: #300; }
         .tier-row:nth-child(2) .tier-label { background: #ffff7f; color: #310; }
         .tier-row:nth-child(3) .tier-label { background: #ffdf7f; color: #320; }
@@ -23,38 +36,63 @@
         .teams-pool-container { flex: 1; background: var(--panel); padding: 15px; border-radius: 12px; display: flex; flex-direction: column; }
         .teams-pool { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; min-height: 300px; flex: 1; }
         
-        /* СТИЛИ КРУЖОЧКОВ С КУРСОРOM-ЛАПКОЙ */
-        .team-item { width: 65px; height: 65px; background: #fff; border-radius: 50%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: grab; position: relative; overflow: hidden; }
-        .team-item:active { cursor: grabbing; }
+        /* СТИЛИ КРУЖОЧКОВ */
+        .team-item { 
+            width: 65px; 
+            height: 65px; 
+            background: #fff; 
+            border-radius: 50%; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+            cursor: grab; 
+            position: relative; 
+            overflow: hidden; 
+            /* Плавное возвращение к исходному размеру при отпускании */
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; 
+        }
+        
+        /* ДЕСКТОП: Увеличение кружка при наведении мыши */
+        @media (hover: hover) {
+            .team-item:hover {
+                transform: scale(1.12);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+            }
+        }
+        
+        /* ДЕСКТОП И МОБИЛКА: Эффект при активном удержании пальцем/мышкой */
+        .team-item:active, .team-item.is-dragging { 
+            cursor: grabbing; 
+            transform: scale(1.15) !important;
+            box-shadow: 0 8px 16px rgba(233, 69, 96, 0.4) !important;
+            z-index: 999;
+        }
+        
         .team-item img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: calc(100% - 12px); max-height: calc(100% - 12px); object-fit: contain; pointer-events: none; display: block; }
         
         .controls { margin-top: 25px; }
         .btn-screenshot { background: var(--accent); color: #fff; border: none; padding: 14px 35px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-        /* 📱 МОБИЛЬНАЯ АДАПТАЦИЯ (Включается автоматически на экранах меньше 768px) */
+        /* 📱 МОБИЛЬНАЯ АДАПТАЦИЯ */
         @media (max-width: 768px) { 
             .container { flex-direction: column; gap: 15px; } 
             h1 { font-size: 1.2rem; }
-            
-            /* Уменьшаем минимальную высоту строк таблицы */
             .tier-row { min-height: 70px; } 
-            
-            /* Делаем левые ячейки с текстом значительно уже и мельче */
             .tier-label { width: 85px; font-size: 0.75rem; padding: 5px; } 
-            
-            /* Задаем меньший размер для кружочков команд */
             .team-item { width: 48px; height: 48px; } 
-            
-            /* Уменьшаем защитный отступ у логотипов внутри кружков */
             .team-item img { max-width: calc(100% - 8px); max-height: calc(100% - 8px); } 
-            
             .tier-zone { gap: 6px; padding: 6px; min-height: 70px; }
             .teams-pool { gap: 8px; min-height: 180px; }
             .btn-screenshot { width: 100%; padding: 12px; font-size: 0.9rem; }
         }
-        
+
+        /* Полноэкранный режим идеальной обрезки скриншота */
+        .screenshot-mode { padding: 0 !important; overflow: hidden; }
+        .screenshot-mode h1, .screenshot-mode .teams-pool-container, .screenshot-mode .controls { display: none !important; }
+        .screenshot-mode .table-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; border-radius: 0; }
+        .screenshot-mode .tier-table { height: 100%; justify-content: space-between; }
+        .screenshot-mode .tier-row { flex: 1; }
     </style>
 </head>
+
 <body>
 
     <h1>Создай свой рейтинг команд КХЛ</h1>
@@ -97,28 +135,63 @@
         </div>
     </div>
 
+    <div class="controls">
+        <button class="btn-screenshot" id="save-btn">Сделать скриншот таблицы</button>
+    </div>
+
     <script>
         let draggedNode = null;
 
-        // Присваиваем ID и вешаем стандартные события перетаскивания
         document.querySelectorAll('.team-item').forEach((item, index) => {
             item.id = 'team-id-' + index;
+            
             item.addEventListener('dragstart', (e) => {
                 draggedNode = e.target;
                 e.dataTransfer.setData('text/plain', e.target.id);
+                e.target.classList.add('is-dragging');
+            });
+
+            item.addEventListener('dragend', (e) => {
+                e.target.classList.remove('is-dragging');
             });
         });
 
-        // Настраиваем зоны сброса (ячейки и пул)
         document.querySelectorAll('.tier-zone, .teams-pool').forEach(zone => {
-            zone.addEventListener('dragover', (e) => e.preventDefault()); // Разрешаем сброс
+            zone.addEventListener('dragover', (e) => e.preventDefault());
             zone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 const targetZone = e.target.closest('.tier-zone, .teams-pool');
                 if (targetZone && draggedNode) {
-                    targetZone.appendChild(draggedNode); // Жестко крепим кружок в сетку
+                    targetZone.appendChild(draggedNode);
+                    draggedNode.classList.remove('is-dragging');
                 }
             });
+        });
+
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            try {
+                document.body.classList.add('screenshot-mode');
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: "browser" } });
+                const video = document.createElement('video');
+                video.srcObject = stream; video.autoplay = true;
+                video.onloadedmetadata = () => {
+                    setTimeout(() => {
+                        const canvas = document.createElement('canvas');
+                        const dpi = window.devicePixelRatio || 1;
+                        canvas.width = window.innerWidth * dpi; 
+                        canvas.height = window.innerHeight * dpi;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const link = document.createElement('a');
+                        link.download = 'my-khl-tier-list.png'; link.href = canvas.toDataURL('image/png'); link.click();
+                        stream.getTracks().forEach(track => track.stop());
+                        document.body.classList.remove('screenshot-mode');
+                    }, 500);
+                };
+            } catch (err) { 
+                document.body.classList.remove('screenshot-mode');
+                alert('Для скриншота выберите вкладку с игрой.'); 
+            }
         });
     </script>
 </body>
