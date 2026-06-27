@@ -24,19 +24,8 @@
         .teams-pool { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; min-height: 300px; flex: 1; }
         
         /* СТИЛИ КРУЖОЧКОВ С КУРСОРOM-ЛАПКОЙ */
-        .team-item { width: 65px; height: 65px; background: #fff; border-radius: 50%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: grab; position: relative; overflow: hidden; 
-                    /* ОТКЛЮЧАЕМ ГОЛУБОЕ ВЫДЕЛЕНИЕ И МЕНЮ ПРИ ЗАЖАТИИ */
-    -webkit-user-select: none; /* для Safari и iOS */
-    -moz-user-select: none;    /* для Firefox */
-    -ms-user-select: none;     /* для старых браузеров */
-    user-select: none;         /* общий стандарт */
-    -webkit-touch-callout: none; /* отключает всплывающее меню на iPhone (Copy/Look Up) */
-    
-    /* ПЛАВНОСТЬ АНИМАЦИИ */
-    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
-                   }
+        .team-item { width: 65px; height: 65px; background: #fff; border-radius: 50%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: grab; position: relative; overflow: hidden; }
         .team-item:active { cursor: grabbing; }
-       
         .team-item img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: calc(100% - 12px); max-height: calc(100% - 12px); object-fit: contain; pointer-events: none; display: block; }
         
         .controls { margin-top: 25px; }
