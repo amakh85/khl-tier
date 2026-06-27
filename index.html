@@ -124,29 +124,6 @@
                 }
             });
         });
-
-        // Скриншотер (Захват экрана вкладки для обхода блокировок безопасности)
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            try {
-                const target = document.getElementById('table-to-screenshot');
-                const rect = target.getBoundingClientRect();
-                const stream = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: "browser" } });
-                const video = document.createElement('video');
-                video.srcObject = stream; video.autoplay = true;
-                video.onloadedmetadata = () => {
-                    setTimeout(() => {
-                        const canvas = document.createElement('canvas');
-                        const dpi = window.devicePixelRatio || 1;
-                        canvas.width = rect.width * dpi; canvas.height = rect.height * dpi;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(video, rect.left*dpi, rect.top*dpi, rect.width*dpi, rect.height*dpi, 0, 0, canvas.width, canvas.height);
-                        const link = document.createElement('a');
-                        link.download = 'my-khl-tier-list.png'; link.href = canvas.toDataURL('image/png'); link.click();
-                        stream.getTracks().forEach(track => track.stop());
-                    }, 500);
-                };
-            } catch (err) { alert('Для скриншота выберите вкладку с игрой.'); }
-        });
     </script>
 </body>
 </html>
