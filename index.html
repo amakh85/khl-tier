@@ -135,10 +135,6 @@
         </div>
     </div>
 
-    <div class="controls">
-        <button class="btn-screenshot" id="save-btn">Сделать скриншот таблицы</button>
-    </div>
-
     <script>
         let draggedNode = null;
 
@@ -168,31 +164,6 @@
             });
         });
 
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            try {
-                document.body.classList.add('screenshot-mode');
-                const stream = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: "browser" } });
-                const video = document.createElement('video');
-                video.srcObject = stream; video.autoplay = true;
-                video.onloadedmetadata = () => {
-                    setTimeout(() => {
-                        const canvas = document.createElement('canvas');
-                        const dpi = window.devicePixelRatio || 1;
-                        canvas.width = window.innerWidth * dpi; 
-                        canvas.height = window.innerHeight * dpi;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        const link = document.createElement('a');
-                        link.download = 'my-khl-tier-list.png'; link.href = canvas.toDataURL('image/png'); link.click();
-                        stream.getTracks().forEach(track => track.stop());
-                        document.body.classList.remove('screenshot-mode');
-                    }, 500);
-                };
-            } catch (err) { 
-                document.body.classList.remove('screenshot-mode');
-                alert('Для скриншота выберите вкладку с игрой.'); 
-            }
-        });
     </script>
 </body>
 </html>
