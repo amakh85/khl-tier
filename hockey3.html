@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рейтинг Хоккейных Команд</title>
+    <style>
+        :root { --bg: #1a1a2e; --panel: #16213e; --text: #fff; --accent: #e94560; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { margin-bottom: 20px; font-size: 1.5rem; }
+        .container { display: flex; gap: 20px; width: 100%; max-width: 1000px; }
+        .table-wrapper { flex: 2; padding: 5px; background: #0f0f1a; border-radius: 12px; }
+        .tier-table { display: flex; flex-direction: column; gap: 8px; background: #0f0f1a; padding: 10px; }
+        .tier-row { display: flex; min-height: 90px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.03); }
+        .tier-label { width: 130px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; font-size: 0.9rem; padding: 10px; user-select: none; flex-shrink: 0; }
+        .tier-row:nth-child(1) .tier-label { background: #bfff7f; color: #300; }
+        .tier-row:nth-child(2) .tier-label { background: #ffff7f; color: #310; }
+        .tier-row:nth-child(3) .tier-label { background: #ffdf7f; color: #320; }
+        .tier-row:nth-child(4) .tier-label { background: #ffbf7f; color: #330; }
+        .tier-row:nth-child(5) .tier-label { background: #ff7f7f; color: #130; }
+        .tier-zone { flex: 1; display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; align-content: center; background: rgba(255,255,255,0.01); }
+        .teams-pool-container { flex: 1; background: var(--panel); padding: 15px; border-radius: 12px; display: flex; flex-direction: column; }
+        .teams-pool { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; min-height: 300px; flex: 1; }
+        
+        /* СТИЛИ КРУЖОЧКОВ С КУРСОРOM-ЛАПКОЙ */
+        .team-item { width: 65px; height: 65px; background: #fff; border-radius: 50%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: grab; position: relative; overflow: hidden; }
+        .team-item:active { cursor: grabbing; }
+        .team-item img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: calc(100% - 12px); max-height: calc(100% - 12px); object-fit: contain; pointer-events: none; display: block; }
+        
+        .controls { margin-top: 25px; }
+        .btn-screenshot { background: var(--accent); color: #fff; border: none; padding: 14px 35px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
+
+        /* 📱 МОБИЛЬНАЯ АДАПТАЦИЯ (Включается автоматически на экранах меньше 768px) */
+        @media (max-width: 768px) { 
+            .container { flex-direction: column; gap: 15px; } 
+            h1 { font-size: 1.2rem; }
+            
+            /* Уменьшаем минимальную высоту строк таблицы */
+            .tier-row { min-height: 70px; } 
+            
+            /* Делаем левые ячейки с текстом значительно уже и мельче */
+            .tier-label { width: 85px; font-size: 0.75rem; padding: 5px; } 
+            
+            /* Задаем меньший размер для кружочков команд */
+            .team-item { width: 48px; height: 48px; } 
+            
+            /* Уменьшаем защитный отступ у логотипов внутри кружков */
+            .team-item img { max-width: calc(100% - 8px); max-height: calc(100% - 8px); } 
+            
+            .tier-zone { gap: 6px; padding: 6px; min-height: 70px; }
+            .teams-pool { gap: 8px; min-height: 180px; }
+            .btn-screenshot { width: 100%; padding: 12px; font-size: 0.9rem; }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <h1>Создай свой рейтинг команд КХЛ</h1>
+
+    <div class="container">
+        <div class="table-wrapper" id="table-to-screenshot">
+            <div class="tier-table">
+                <div class="tier-row"><div class="tier-label">❤️<br>За команду и двор стреляю в упор</div><div class="tier-zone"></div></div>
+                <div class="tier-row"><div class="tier-label">😊<br>Симпатизирую</div><div class="tier-zone"></div></div>
+                <div class="tier-row"><div class="tier-label">😐<br>Ровно</div><div class="tier-zone"></div></div>
+                <div class="tier-row"><div class="tier-label">🙁<br>Есть вопросики</div><div class="tier-zone"></div></div>
+                <div class="tier-row"><div class="tier-label">😡<br>Будем драться</div><div class="tier-zone"></div></div>
+            </div>
+        </div>
+
+        <div class="teams-pool-container">
+            <div class="teams-pool">
+                <div class="team-item" draggable="true"><img src="logos/loko.png" alt="Локо"></div>
+                <div class="team-item" draggable="true"><img src="logos/ak bars.png" alt="Ак Барс"></div>
+                <div class="team-item" draggable="true"><img src="logos/traktor.png" alt="Трактор"></div>
+                <div class="team-item" draggable="true"><img src="logos/dinamo.png" alt="Динамо Москва"></div>
+                <div class="team-item" draggable="true"><img src="logos/minsk.png" alt="Динамо Минск"></div>
+                <div class="team-item" draggable="true"><img src="logos/sever.png" alt="Северсталь"></div>
+                <div class="team-item" draggable="true"><img src="logos/lada.png" alt="Лада"></div>
+                <div class="team-item" draggable="true"><img src="logos/dragons.png" alt="Шанхайские драконы"></div>
+                <div class="team-item" draggable="true"><img src="logos/ava.png" alt="Авангард"></div>
+                <div class="team-item" draggable="true"><img src="logos/cska.png" alt="ЦСКА"></div>
+                <div class="team-item" draggable="true"><img src="logos/spartak.png" alt="Спартак"></div>
+                <div class="team-item" draggable="true"><img src="logos/torpedo.png" alt="Торпедо"></div>
+                <div class="team-item" draggable="true"><img src="logos/metall.png" alt="Металлург"></div>
+                <div class="team-item" draggable="true"><img src="logos/avto.png" alt="Автомобилист"></div>
+                <div class="team-item" draggable="true"><img src="logos/sibir.png" alt="Сибирь"></div>
+                <div class="team-item" draggable="true"><img src="logos/salavat.png" alt="Салават"></div>
+                <div class="team-item" draggable="true"><img src="logos/sochi.png" alt="Сочи"></div>
+                <div class="team-item" draggable="true"><img src="logos/ska.png" alt="Ска"></div>
+                <div class="team-item" draggable="true"><img src="logos/admiral.png" alt="Адмирал"></div>
+                <div class="team-item" draggable="true"><img src="logos/barys.png" alt="Барыс"></div>
+                <div class="team-item" draggable="true"><img src="logos/khimik.png" alt="Нефтехимик"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-screenshot" id="save-btn">Сделать скриншот таблицы</button>
+    </div>
+
+    <script>
+        let draggedNode = null;
+
+        // Присваиваем ID и вешаем стандартные события перетаскивания
+        document.querySelectorAll('.team-item').forEach((item, index) => {
+            item.id = 'team-id-' + index;
+            item.addEventListener('dragstart', (e) => {
+                draggedNode = e.target;
+                e.dataTransfer.setData('text/plain', e.target.id);
+            });
+        });
+
+        // Настраиваем зоны сброса (ячейки и пул)
+        document.querySelectorAll('.tier-zone, .teams-pool').forEach(zone => {
+            zone.addEventListener('dragover', (e) => e.preventDefault()); // Разрешаем сброс
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const targetZone = e.target.closest('.tier-zone, .teams-pool');
+                if (targetZone && draggedNode) {
+                    targetZone.appendChild(draggedNode); // Жестко крепим кружок в сетку
+                }
+            });
+        });
+
+        // Скриншотер (Захват экрана вкладки для обхода блокировок безопасности)
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            try {
+                const target = document.getElementById('table-to-screenshot');
+                const rect = target.getBoundingClientRect();
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: "browser" } });
+                const video = document.createElement('video');
+                video.srcObject = stream; video.autoplay = true;
+                video.onloadedmetadata = () => {
+                    setTimeout(() => {
+                        const canvas = document.createElement('canvas');
+                        const dpi = window.devicePixelRatio || 1;
+                        canvas.width = rect.width * dpi; canvas.height = rect.height * dpi;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, rect.left*dpi, rect.top*dpi, rect.width*dpi, rect.height*dpi, 0, 0, canvas.width, canvas.height);
+                        const link = document.createElement('a');
+                        link.download = 'my-khl-tier-list.png'; link.href = canvas.toDataURL('image/png'); link.click();
+                        stream.getTracks().forEach(track => track.stop());
+                    }, 500);
+                };
+            } catch (err) { alert('Для скриншота выберите вкладку с игрой.'); }
+        });
+    </script>
+</body>
+</html>
